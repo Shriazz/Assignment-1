@@ -1,0 +1,49 @@
+const int lm35Pin = A0; // Analog pin for LM35 temperature sensor
+const int ledPin = 13;  // Built-in LED on Arduino Uno
+
+unsigned long previousMillis = 0;
+int temperature;
+bool ledState = LOW;
+unsigned long interval = 250;  // Initial LED blink interval
+
+void setup() {
+  pinMode(ledPin, OUTPUT);
+  // You may need to configure the LM35 sensor, but this code assumes it's properly connected.
+}
+
+void loop() {
+  unsigned long currentMillis = millis(); // Get the current time
+
+  if (currentMillis - previousMillis >= interval) {
+    previousMillis = currentMillis; // Save the current time
+
+    temperature = readTemperature(); // Read temperature from LM35 sensor
+
+    // Check the temperature and adjust LED blink interval
+    if (temperature < 30) {
+      interval = 250; // LED blinks every 250ms
+    } else {
+      interval = 500; // LED blinks every 500ms
+    }
+
+    // Toggle the LED state
+    if (ledState == LOW) {
+      ledState = HIGH;
+    } else {
+      ledState = LOW;
+    }
+
+    // Apply the LED state
+    digitalWrite(ledPin, ledState);
+  }
+}
+
+int readTemperature() {
+  // Read the analog value from LM35 sensor
+  int sensorValue = analogRead(lm35Pin);
+  
+  // Convert the analog value to temperature in degrees Celsius
+  float temperatureCelsius = (sensorValue * 0.48875); // Adjust this value based on your LM35 sensor's sensitivity
+  
+  return temperatureCelsius;
+} 
